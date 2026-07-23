@@ -18,13 +18,15 @@ function DashboardContent() {
   const [responses, setResponses] = useState<ControlResponse[]>([]);
   const [hasPaid, setHasPaid] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
     loadDashboard();
   }, []);
 
   const loadDashboard = async () => {
+    const supabase = createClient();
+    if (!supabase) return;
+
     const {
       data: { user },
     } = await supabase.auth.getUser();

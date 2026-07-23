@@ -14,7 +14,6 @@ import { Shield, CheckCircle, Clock, Circle, Ban, Paperclip, Upload, X, Save } f
 
 function AssessmentContent() {
   const router = useRouter();
-  const supabase = createClient();
   const { addToast } = useToast();
   const { saveState: autosaveState, debouncedSave, save } = useAutosave();
 
@@ -34,6 +33,9 @@ function AssessmentContent() {
   }, []);
 
   const loadAssessment = async () => {
+    const supabase = createClient();
+    if (!supabase) return;
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -139,6 +141,9 @@ function AssessmentContent() {
     async (controlId: string): Promise<ControlResponse | null> => {
       if (!assessmentId) return null;
 
+      const supabase = createClient();
+      if (!supabase) return null;
+
       const existing = responses.get(controlId);
       if (existing) return existing;
 
@@ -164,11 +169,13 @@ function AssessmentContent() {
 
       return null;
     },
-    [assessmentId, responses, supabase]
+    [assessmentId, responses]
   );
 
   const setControlStatus = useCallback(
     async (controlId: string, status: string) => {
+      const supabase = createClient();
+      if (!supabase) return;
       const resp = await getOrCreateResponse(controlId);
       if (!resp) return;
 
@@ -207,11 +214,13 @@ function AssessmentContent() {
         }
       });
     },
-    [assessmentId, supabase, getOrCreateResponse, debouncedSave]
+    [assessmentId, getOrCreateResponse, debouncedSave]
   );
 
   const updateNotes = useCallback(
     async (controlId: string, notes: string) => {
+      const supabase = createClient();
+      if (!supabase) return;
       const resp = await getOrCreateResponse(controlId);
       if (!resp) return;
 
@@ -231,13 +240,15 @@ function AssessmentContent() {
         });
       });
     },
-    [assessmentId, supabase, getOrCreateResponse, debouncedSave]
+    [assessmentId, getOrCreateResponse, debouncedSave]
   );
 
   const handleFileUpload = useCallback(
     async (controlId: string, files: FileList | null) => {
       if (!files || !companyId) return;
 
+      const supabase = createClient();
+      if (!supabase) return;
       const resp = await getOrCreateResponse(controlId);
       if (!resp) return;
 
@@ -286,11 +297,13 @@ function AssessmentContent() {
         addToast(`"${file.name}" uploaded.`, "success");
       }
     },
-    [companyId, supabase, getOrCreateResponse, save, addToast]
+    [companyId, getOrCreateResponse, save, addToast]
   );
 
   const removeEvidence = useCallback(
     async (controlId: string, fileId: string) => {
+      const supabase = createClient();
+      if (!supabase) return;
       const resp = responses.get(controlId);
       if (!resp) return;
 
@@ -320,11 +333,13 @@ function AssessmentContent() {
 
       addToast("Evidence removed.", "info");
     },
-    [supabase, responses, save, addToast]
+    [responses, save, addToast]
   );
 
   const savePOAM = useCallback(
     async (controlId: string, description: string, responsible: string, date: string) => {
+      const supabase = createClient();
+      if (!supabase) return;
       const resp = responses.get(controlId);
       if (!resp) return;
 
@@ -349,7 +364,7 @@ function AssessmentContent() {
         });
       });
     },
-    [supabase, responses, debouncedSave]
+    [responses, debouncedSave]
   );
 
   // Compute stats

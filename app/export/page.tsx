@@ -24,7 +24,6 @@ import {
 
 function ExportContent() {
   const router = useRouter();
-  const supabase = createClient();
   const { addToast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -43,6 +42,9 @@ function ExportContent() {
   }, []);
 
   const loadData = async () => {
+    const supabase = createClient();
+    if (!supabase) return;
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -204,6 +206,9 @@ function ExportContent() {
 
   const downloadZip = async () => {
     setGenerating(true);
+
+    const supabase = createClient();
+    if (!supabase) return;
 
     try {
       const JSZip = (await import("jszip")).default;

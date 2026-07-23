@@ -12,12 +12,14 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+
+    const supabase = createClient();
+    if (!supabase) return;
 
     const { error: authError } = await supabase.auth.signInWithPassword({
       email,
@@ -37,6 +39,9 @@ export default function LoginPage() {
   const handleMagicLink = async () => {
     setError("");
     setLoading(true);
+
+    const supabase = createClient();
+    if (!supabase) return;
 
     const { error: authError } = await supabase.auth.signInWithOtp({
       email,

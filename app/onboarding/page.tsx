@@ -15,7 +15,6 @@ function OnboardingContent() {
   const [scope, setScope] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
 
   const handleCUIChoice = (choice: "yes" | "no") => {
     setCuiChoice(choice);
@@ -37,6 +36,10 @@ function OnboardingContent() {
 
   const createAssessment = async (assessmentLevel: CMMCLevel, scopeItems: string[]) => {
     setSaving(true);
+
+    const supabase = createClient();
+    if (!supabase) return;
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -74,6 +77,9 @@ function OnboardingContent() {
   };
 
   const createAssessmentForCompany = async (companyId: string, assessmentLevel: CMMCLevel) => {
+    const supabase = createClient();
+    if (!supabase) return;
+
     const { data: assessment } = await supabase
       .from("assessments")
       .insert({

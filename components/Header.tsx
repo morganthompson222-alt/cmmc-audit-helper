@@ -10,9 +10,14 @@ export default function Header() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     const getUser = async () => {
       const {
         data: { user },
@@ -32,6 +37,8 @@ export default function Header() {
   }, []);
 
   const handleSignOut = async () => {
+    const supabase = createClient();
+    if (!supabase) return;
     await supabase.auth.signOut();
     router.push("/");
     router.refresh();
