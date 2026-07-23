@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #0b1a3a;
+  --navy-light: #1a2f5a;
+  --gold: #d4a843;
+  --gold-light: #f0d68a;
+  --red: #b22234;
+  --green: #2d7d46;
+  --gray: #6c757d;
+  --light-bg: #f4f6f9;
+}
+
+@layer base {
+  body {
+    @apply bg-[#f4f6f9] text-[#1e1e2a] antialiased;
+    font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] p-8 mb-6;
+  }
+  .btn {
+    @apply inline-flex items-center gap-2 px-7 py-3 rounded-lg font-semibold text-base border-none cursor-pointer transition-all duration-200 no-underline;
+  }
+  .btn:hover {
+    @apply -translate-y-0.5 shadow-[0_6px_20px_rgba(11,26,58,0.25)];
+  }
+  .btn:active {
+    @apply translate-y-0;
+  }
+  .btn-primary {
+    @apply bg-navy text-white;
+  }
+  .btn-primary:hover {
+    @apply bg-[#0d254a];
+  }
+  .btn-gold {
+    @apply bg-gold text-navy;
+  }
+  .btn-gold:hover {
+    @apply bg-[#c49a3a];
+  }
+  .btn-outline {
+    @apply bg-transparent text-navy border-2 border-navy;
+  }
+  .btn-outline:hover {
+    @apply bg-navy text-white;
+  }
+  .btn-sm {
+    @apply px-4 py-1.5 text-sm;
+  }
+  .btn:disabled {
+    @apply opacity-50 cursor-not-allowed translate-y-0 shadow-none;
+  }
+  .alert {
+    @apply p-4 rounded-lg my-3 border-l-4;
+  }
+  .alert-info {
+    @apply bg-blue-50 border-navy text-navy;
+  }
+  .alert-warn {
+    @apply bg-yellow-50 border-yellow-400 text-yellow-800;
+  }
+  .alert-danger {
+    @apply bg-red-50 border-red-600 text-red-800;
+  }
+  .alert-success {
+    @apply bg-green-50 border-green-600 text-green-800;
+  }
+}
