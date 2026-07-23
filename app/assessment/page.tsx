@@ -9,7 +9,7 @@ import { useToast } from "@/components/Toast";
 import { useAutosave } from "@/hooks/useAutosave";
 import { MAX_FILE_SIZE, formatBytes } from "@/lib/utils";
 import AuthGuard from "@/components/AuthGuard";
-import { CMMCLevel, Control, ControlResponse } from "@/lib/types";
+import { CMMCLevel, Control, ControlResponse, EvidenceFile, POAMItem } from "@/lib/types";
 import { Shield, CheckCircle, Clock, Circle, Ban, Paperclip, Upload, X, Save } from "lucide-react";
 
 function AssessmentContent() {
@@ -94,12 +94,12 @@ function AssessmentContent() {
 
       const responseMap = new Map<string, ControlResponse>();
       if (resps) {
-        resps.forEach((r) => responseMap.set(r.control_id, r));
+        resps.forEach((r: ControlResponse) => responseMap.set(r.control_id, r));
       }
       setResponses(responseMap);
 
       // Load evidence metadata
-      const responseIds = resps?.map((r) => r.id) || [];
+      const responseIds = resps?.map((r: ControlResponse) => r.id) || [];
       if (responseIds.length > 0) {
         const { data: evidence } = await supabase
           .from("evidence_files")
@@ -107,11 +107,11 @@ function AssessmentContent() {
           .in("control_response_id", responseIds);
 
         const evMap = new Map<string, { id: string; name: string; size: number }[]>();
-        evidence?.forEach((e) => {
-          const resp = resps?.find((r) => r.id === e.control_response_id);
+        evidence?.forEach((e: EvidenceFile) => {
+          const resp = resps?.find((r: ControlResponse) => r.id === e.control_response_id);
           if (resp) {
             const existing = evMap.get(resp.control_id) || [];
-            existing.push({ id: e.id, name: e.filename, size: e.size_bytes });
+            existing.push({ id: e.id!, name: e.filename, size: e.size_bytes });
             evMap.set(resp.control_id, existing);
           }
         });
@@ -126,8 +126,8 @@ function AssessmentContent() {
           .in("control_response_id", responseIds);
 
         const poamMap = new Map<string, any>();
-        poams?.forEach((p) => {
-          const resp = resps?.find((r) => r.id === p.control_response_id);
+        poams?.forEach((p: POAMItem) => {
+          const resp = resps?.find((r: ControlResponse) => r.id === p.control_response_id);
           if (resp) poamMap.set(resp.control_id, p);
         });
         setPoamItems(poamMap);

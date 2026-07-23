@@ -93,7 +93,7 @@ function ExportContent() {
     if (resps) setResponses(resps);
 
     if (resps?.length) {
-      const responseIds = resps.map((r) => r.id);
+      const responseIds = resps.map((r: ControlResponse) => r.id);
       const { data: poams } = await supabase
         .from("poam_items")
         .select("*")
@@ -231,7 +231,7 @@ function ExportContent() {
           .eq("assessment_id", assessmentId);
 
         if (allResponses?.length) {
-          const responseIds = allResponses.map((r) => r.id);
+          const responseIds = allResponses.map((r: ControlResponse) => r.id);
 
           const { data: evidence } = await supabase
             .from("evidence_files")
@@ -249,7 +249,7 @@ function ExportContent() {
 
                 if (blob && evidenceFolder) {
                   const ctrlResp = allResponses.find(
-                    (r) => r.id === ev.control_response_id
+                    (r: ControlResponse) => r.id === ev.control_response_id
                   );
                   const ctrlId = ctrlResp?.control_id || "unknown";
                   evidenceFolder.file(`${ctrlId}/${ev.filename}`, blob);

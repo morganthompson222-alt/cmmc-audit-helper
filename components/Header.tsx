@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Shield } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { Session } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -29,7 +30,7 @@ export default function Header() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: any, session: Session | null) => {
       setUser(session?.user ?? null);
     });
 
