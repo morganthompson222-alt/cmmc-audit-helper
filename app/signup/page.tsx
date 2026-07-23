@@ -12,6 +12,7 @@ export default function SignupPage() {
   const [companyName, setCompanyName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const router = useRouter();
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -99,7 +100,24 @@ export default function SignupPage() {
               placeholder="Minimum 8 characters"
             />
           </div>
-          <button type="submit" disabled={loading} className="btn btn-primary w-full !justify-center">
+          <div className="bg-gray-50 border border-gray-300 rounded-lg p-4 text-left">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-0.5 w-4 h-4 accent-navy flex-shrink-0"
+              />
+              <span className="text-xs text-gray-600 leading-relaxed">
+                <strong className="text-gray-800">I confirm that I have thoroughly reviewed and agree to the</strong>{" "}
+                <Link href="/terms" target="_blank" className="text-navy underline hover:text-navy-light">Terms and Conditions</Link>
+                {" "}and{" "}
+                <Link href="/privacy" target="_blank" className="text-navy underline hover:text-navy-light">Privacy Policy</Link>.
+                I understand that CMMC Audit Helper is a self-assessment preparation tool and does not constitute a C3PAO certification.
+              </span>
+            </label>
+          </div>
+          <button type="submit" disabled={loading || !acceptedTerms} className="btn btn-primary w-full !justify-center">
             {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
