@@ -53,7 +53,7 @@ export default function LandingPage() {
           <div className="text-white/80 text-sm mt-1">per assessment package</div>
           <ul className="text-left text-sm mt-6 space-y-2">
             <li className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> Full SSP &amp; POA&amp;M documentation</li>
-            <li className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> SPRS-ready score sheet</li>
+            <li className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> Assessment progress sheet</li>
             <li className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> Evidence bundle organized by control</li>
             <li className="flex items-center gap-2"><CheckCircle size={16} className="text-green-400" /> Pay only when ready to export</li>
           </ul>

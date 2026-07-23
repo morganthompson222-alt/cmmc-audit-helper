@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getAllControls } from "@/lib/controls";
-import { calculateSPRSScore } from "@/lib/utils";
+import { calculateCompletionScore } from "@/lib/utils";
 import { useToast } from "@/components/Toast";
 import AuthGuard from "@/components/AuthGuard";
 import { CMMCLevel, ControlResponse, Control } from "@/lib/types";
@@ -131,7 +131,7 @@ function ExportContent() {
       const inProgress = responses.filter((r) => r.status === "in_progress").length;
       const na = responses.filter((r) => r.status === "not_applicable").length;
       const notStarted = total - complete - inProgress - na;
-      const sprsScore = calculateSPRSScore(total, complete, na);
+      const completionScore = calculateCompletionScore(total, complete, na);
 
       // SSP content
       let ssp = "SYSTEM SECURITY PLAN (SSP)\n";
@@ -139,7 +139,7 @@ function ExportContent() {
       ssp += `Company: ${companyName}\n`;
       ssp += `CMMC Level: ${level}\n`;
       ssp += `Date: ${new Date().toLocaleDateString()}\n`;
-      ssp += `SPRS Score: ${sprsScore}%\n\n`;
+      ssp += `Assessment Progress: ${completionScore}%\n\n`;
       ssp += "CONTROL STATUS SUMMARY\n";
       ssp += "-".repeat(40) + "\n";
       ssp += `Total Controls: ${total}\n`;
@@ -173,7 +173,7 @@ function ExportContent() {
       cover += `Generated: ${new Date().toLocaleString()}\n`;
       cover += `Company: ${companyName}\n`;
       cover += `Level: ${level}\n`;
-      cover += `SPRS Score: ${sprsScore}%\n`;
+      cover += `Assessment Progress: ${completionScore}%\n`;
 
       // POA&M content
       let poam = "PLAN OF ACTION & MILESTONES (POA&M)\n";
@@ -295,7 +295,7 @@ function ExportContent() {
   const complete = responses.filter((r) => r.status === "yes").length;
   const na = responses.filter((r) => r.status === "not_applicable").length;
   const inProgress = responses.filter((r) => r.status === "in_progress").length;
-  const sprsScore = calculateSPRSScore(total, complete, na);
+  const completionScore = calculateCompletionScore(total, complete, na);
   const openPoamCount = poamItems.filter((p) => p.status === "open").length;
 
   return (
@@ -327,8 +327,8 @@ function ExportContent() {
         <div className="bg-gray-50 rounded-lg p-5 border border-gray-200 flex items-center gap-3">
           <Shield size={32} className="text-navy" />
           <div>
-            <div className="font-semibold">SPRS Score Sheet</div>
-            <div className="text-xs text-gray-500">Score: {sprsScore}%</div>
+            <div className="font-semibold">Assessment Summary</div>
+            <div className="text-xs text-gray-500">Progress: {completionScore}%</div>
           </div>
         </div>
         <div className="bg-gray-50 rounded-lg p-5 border border-gray-200 flex items-center gap-3">

@@ -179,7 +179,7 @@ function AssessmentContent() {
       const resp = await getOrCreateResponse(controlId);
       if (!resp) return;
 
-      debouncedSave(async () => {
+      debouncedSave(controlId, async () => {
         const { error } = await supabase
           .from("control_responses")
           .update({ status, updated_at: new Date().toISOString() })
@@ -224,7 +224,7 @@ function AssessmentContent() {
       const resp = await getOrCreateResponse(controlId);
       if (!resp) return;
 
-      debouncedSave(async () => {
+      debouncedSave(controlId, async () => {
         const { error } = await supabase
           .from("control_responses")
           .update({ notes, updated_at: new Date().toISOString() })
@@ -262,14 +262,14 @@ function AssessmentContent() {
 
         const storagePath = `${companyId}/evidence/${resp.id}/${Date.now()}_${file.name}`;
 
-        await save(async () => {
+        await save(controlId, async () => {
           const { error: uploadError } = await supabase.storage
             .from("evidence")
             .upload(storagePath, file);
 
           if (uploadError) throw uploadError;
 
-          const { data: evRecord } = await supabase
+          const { data: evRecord, error: insertError } = await supabase
             .from("evidence_files")
             .insert({
               control_response_id: resp.id,
@@ -281,17 +281,20 @@ function AssessmentContent() {
             .select("id")
             .single();
 
-          if (evRecord) {
-            setEvidenceFiles((prev) => {
-              const next = new Map(prev);
-              const existing = next.get(controlId) || [];
-              next.set(controlId, [
-                ...existing,
-                { id: evRecord.id, name: file.name, size: file.size },
-              ]);
-              return next;
-            });
+          if (insertError || !evRecord) {
+            await supabase.storage.from("evidence").remove([storagePath]);
+            throw insertError || new Error("Failed to save evidence record");
           }
+
+          setEvidenceFiles((prev) => {
+            const next = new Map(prev);
+            const existing = next.get(controlId) || [];
+            next.set(controlId, [
+              ...existing,
+              { id: evRecord.id, name: file.name, size: file.size },
+            ]);
+            return next;
+          });
         });
 
         addToast(`"${file.name}" uploaded.`, "success");
@@ -307,18 +310,25 @@ function AssessmentContent() {
       const resp = responses.get(controlId);
       if (!resp) return;
 
-      await save(async () => {
-        const { data: files } = await supabase
+      await save(controlId, async () => {
+        const { data: fileRecord } = await supabase
           .from("evidence_files")
-          .select("storage_path")
+          .select("storage_path, id")
           .eq("id", fileId)
           .single();
 
-        if (files?.storage_path) {
-          await supabase.storage.from("evidence").remove([files.storage_path]);
-        }
+        if (!fileRecord) throw new Error("Evidence record not found");
 
-        await supabase.from("evidence_files").delete().eq("id", fileId);
+        const { error: deleteError } = await supabase
+          .from("evidence_files")
+          .delete()
+          .eq("id", fileId);
+
+        if (deleteError) throw deleteError;
+
+        if (fileRecord.storage_path) {
+          await supabase.storage.from("evidence").remove([fileRecord.storage_path]);
+        }
 
         setEvidenceFiles((prev) => {
           const next = new Map(prev);
@@ -343,7 +353,7 @@ function AssessmentContent() {
       const resp = responses.get(controlId);
       if (!resp) return;
 
-      debouncedSave(async () => {
+      debouncedSave(controlId, async () => {
         const { error } = await supabase.from("poam_items").upsert(
           {
             control_response_id: resp.id,

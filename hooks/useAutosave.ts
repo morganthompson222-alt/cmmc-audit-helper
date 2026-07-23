@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useRef, useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 
 interface AutosaveState {
@@ -14,27 +13,32 @@ export function useAutosave() {
     status: "idle",
     lastSaved: null,
   });
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const { addToast } = useToast();
 
-  const save = useCallback(
-    async (fn: () => Promise<void>) => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+  const saveNow = useCallback(
+    async (key: string, fn: () => Promise<void>) => {
+      const existing = timerRefs.current.get(key);
+      if (existing) clearTimeout(existing);
 
-      setState((s) => ({ ...s, status: "saving" }));
+      setState({ status: "saving", lastSaved: null });
 
       try {
         await fn();
-        setState({ status: "saved", lastSaved: new Date() });
-        timerRef.current = setTimeout(() => {
-          setState((s) => ({
-            ...s,
-            status: s.status === "saved" ? "idle" : s.status,
-          }));
-        }, 2000);
+        timerRefs.current.delete(key);
+
+        if (timerRefs.current.size === 0) {
+          setState({ status: "saved", lastSaved: new Date() });
+          setTimeout(() => {
+            setState((s) =>
+              s.status === "saved" ? { status: "idle", lastSaved: null } : s
+            );
+          }, 2000);
+        }
       } catch (err) {
-        console.error("Autosave failed:", err);
-        setState((s) => ({ ...s, status: "error" }));
+        console.error("Autosave failed for", key, err);
+        timerRefs.current.delete(key);
+        setState({ status: "error", lastSaved: null });
         addToast("Failed to save changes. Please try again.", "error");
       }
     },
@@ -42,17 +46,27 @@ export function useAutosave() {
   );
 
   const debouncedSave = useCallback(
-    (fn: () => Promise<void>, delay = 600) => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      setState((s) => ({ ...s, status: "saving" }));
-      timerRef.current = setTimeout(() => save(fn), delay);
+    (key: string, fn: () => Promise<void>, delay = 600) => {
+      const existing = timerRefs.current.get(key);
+      if (existing) clearTimeout(existing);
+
+      timerRefs.current.set(
+        key,
+        setTimeout(() => saveNow(key, fn), delay)
+      );
     },
-    [save]
+    [saveNow]
+  );
+
+  const save = useCallback(
+    (key: string, fn: () => Promise<void>) => saveNow(key, fn),
+    [saveNow]
   );
 
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRefs.current.forEach((timer) => clearTimeout(timer));
+      timerRefs.current.clear();
     };
   }, []);
 

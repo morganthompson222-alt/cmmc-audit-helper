@@ -80,6 +80,31 @@ function OnboardingContent() {
     const supabase = createClient();
     if (!supabase) return;
 
+    // Check for existing active assessment of the same level
+    const { data: existing } = await supabase
+      .from("assessments")
+      .select("id, level")
+      .eq("company_id", companyId)
+      .eq("status", "in_progress")
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (existing?.[0]) {
+      if (existing[0].level === assessmentLevel) {
+        // Already exists — resume
+        sessionStorage.setItem("current_assessment_id", existing[0].id);
+        sessionStorage.setItem("current_level", String(assessmentLevel));
+        setSaving(false);
+        router.push("/assessment");
+        return;
+      }
+      // Different level — mark old as completed, create new
+      await supabase
+        .from("assessments")
+        .update({ status: "completed", updated_at: new Date().toISOString() })
+        .eq("id", existing[0].id);
+    }
+
     const { data: assessment } = await supabase
       .from("assessments")
       .insert({
@@ -92,7 +117,6 @@ function OnboardingContent() {
 
     setSaving(false);
 
-    // Store level in session storage for immediate access
     if (assessment) {
       sessionStorage.setItem("current_assessment_id", assessment.id);
       sessionStorage.setItem("current_level", String(assessmentLevel));

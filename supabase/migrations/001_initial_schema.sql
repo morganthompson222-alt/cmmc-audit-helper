@@ -181,3 +181,34 @@ CREATE POLICY payments_access ON cmmc.payments
       SELECT id FROM cmmc.companies WHERE owner_user_id = auth.uid()
     )
   );
+
+-- ─── Storage RLS Policies ───
+-- For the "evidence" bucket. Run these AFTER creating the bucket in Storage dashboard.
+-- Policies enforce that users can only access files under their company's folder.
+
+CREATE POLICY "Users can upload to their company folder"
+  ON storage.objects FOR INSERT
+  WITH CHECK (
+    bucket_id = 'evidence'
+    AND (SPLIT_PART(name, '/', 1))::UUID IN (
+      SELECT id FROM cmmc.companies WHERE owner_user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Users can read their company evidence"
+  ON storage.objects FOR SELECT
+  USING (
+    bucket_id = 'evidence'
+    AND (SPLIT_PART(name, '/', 1))::UUID IN (
+      SELECT id FROM cmmc.companies WHERE owner_user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Users can delete their company evidence"
+  ON storage.objects FOR DELETE
+  USING (
+    bucket_id = 'evidence'
+    AND (SPLIT_PART(name, '/', 1))::UUID IN (
+      SELECT id FROM cmmc.companies WHERE owner_user_id = auth.uid()
+    )
+  );

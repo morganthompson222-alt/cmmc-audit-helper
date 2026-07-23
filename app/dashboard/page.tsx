@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getAllControls, LEVEL1_CONTROLS, LEVEL2_CONTROLS } from "@/lib/controls";
-import { calculateSPRSScore } from "@/lib/utils";
+import { calculateCompletionScore } from "@/lib/utils";
 import { CMMCLevel, ControlResponse } from "@/lib/types";
 import AuthGuard from "@/components/AuthGuard";
 import { FileText, ClipboardList, ArrowRight, Clock, Calendar } from "lucide-react";
@@ -85,7 +85,7 @@ function DashboardContent() {
   const notStarted = total - complete - inProgress - na;
   const done = complete + na;
   const pct = Math.round((done / (total || 1)) * 100);
-  const sprsScore = calculateSPRSScore(total, complete, na);
+  const completionScore = calculateCompletionScore(total, complete, na);
 
   const daysUntil = Math.ceil(
     (new Date(2026, 10, 10).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
@@ -150,7 +150,7 @@ function DashboardContent() {
               </span>
             </span>
             <span className="font-semibold text-navy">
-              SPRS Score: {sprsScore}%
+              Assessment Progress: {completionScore}%
             </span>
           </div>
           {daysUntil > 0 && daysUntil < 90 && (

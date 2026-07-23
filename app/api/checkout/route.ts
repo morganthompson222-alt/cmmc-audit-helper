@@ -4,6 +4,12 @@ import { getStripe, getStripePriceId, STRIPE_AMOUNT } from "@/lib/stripe";
 
 export async function POST(request: Request) {
   try {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!appUrl) {
+      console.error("NEXT_PUBLIC_APP_URL is not set");
+      return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+    }
+
     const supabase = createClient();
     const {
       data: { user },
@@ -30,8 +36,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ url: "/export" });
     }
 
-    const origin = process.env.NEXT_PUBLIC_APP_URL || request.headers.get("origin") || "http://localhost:3000";
-
     const session = await getStripe().checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -41,8 +45,8 @@ export async function POST(request: Request) {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/export?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/export`,
+      success_url: `${appUrl}/export?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/export`,
       client_reference_id: company.id,
       metadata: {
         company_id: company.id,
