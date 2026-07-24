@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { SCOPE_OPTIONS } from "@/lib/controls";
@@ -14,6 +14,7 @@ function OnboardingContent() {
   const [level, setLevel] = useState<CMMCLevel | null>(null);
   const [scope, setScope] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleCUIChoice = (choice: "yes" | "no") => {
@@ -26,7 +27,7 @@ function OnboardingContent() {
     if (level === 2) {
       setStep("scope");
     } else {
-      createAssessment(level, []);
+      createAssessment(level);
     }
   };
 
@@ -34,103 +35,130 @@ function OnboardingContent() {
     setScope((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
   };
 
-  const createAssessment = async (assessmentLevel: CMMCLevel, scopeItems: string[]) => {
+  const createAssessment = async (assessmentLevel: CMMCLevel) => {
     setSaving(true);
+    setError("");
 
-    const supabase = createClient();
-    if (!supabase) return;
+    try {
+      const supabase = createClient();
+      if (!supabase) throw new Error("Unable to connect to database");
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-
-    // Find company
-    const { data: companies } = await supabase
-      .from("companies")
-      .select("id")
-      .eq("owner_user_id", user.id)
-      .limit(1);
-
-    const companyId = companies?.[0]?.id;
-
-    if (!companyId) {
-      // Create company if not exists
-      const { data: newCompany } = await supabase
-        .from("companies")
-        .insert({ name: "My Company", owner_user_id: user.id, subscription_status: "unpaid", cmmc_level: assessmentLevel })
-        .select("id")
-        .single();
-
-      if (newCompany) {
-        createAssessmentForCompany(newCompany.id, assessmentLevel);
+      if (!user) {
+        router.push("/login");
+        return;
       }
-    } else {
-      // Update level
-      await supabase.from("companies").update({ cmmc_level: assessmentLevel }).eq("id", companyId);
-      createAssessmentForCompany(companyId, assessmentLevel);
+
+      // Find company
+      const { data: companies, error: companiesError } = await supabase
+        .from("companies")
+        .select("id")
+        .eq("owner_user_id", user.id)
+        .limit(1);
+
+      if (companiesError) throw new Error(companiesError.message);
+
+      let companyId = companies?.[0]?.id;
+
+      if (!companyId) {
+        // Create company if not exists
+        const { data: newCompany, error: createError } = await supabase
+          .from("companies")
+          .insert({
+            name: "My Company",
+            owner_user_id: user.id,
+            subscription_status: "unpaid",
+            cmmc_level: assessmentLevel,
+          })
+          .select("id")
+          .single();
+
+        if (createError) throw new Error(createError.message);
+        if (!newCompany) throw new Error("Failed to create company");
+        companyId = newCompany.id;
+      } else {
+        const { error: updateError } = await supabase
+          .from("companies")
+          .update({ cmmc_level: assessmentLevel })
+          .eq("id", companyId);
+
+        if (updateError) throw new Error(updateError.message);
+      }
+
+      await createAssessmentForCompany(companyId, assessmentLevel);
+    } catch (err: any) {
+      console.error("Onboarding error:", err);
+      setError(err.message || "Something went wrong. Please try again.");
+      setSaving(false);
     }
   };
 
   const createAssessmentForCompany = async (companyId: string, assessmentLevel: CMMCLevel) => {
-    const supabase = createClient();
-    if (!supabase) return;
+    try {
+      const supabase = createClient();
+      if (!supabase) throw new Error("Unable to connect to database");
 
-    // Check for existing active assessment of the same level
-    const { data: existing } = await supabase
-      .from("assessments")
-      .select("id, level")
-      .eq("company_id", companyId)
-      .eq("status", "in_progress")
-      .order("created_at", { ascending: false })
-      .limit(1);
-
-    if (existing?.[0]) {
-      if (existing[0].level === assessmentLevel) {
-        // Already exists — resume
-        sessionStorage.setItem("current_assessment_id", existing[0].id);
-        sessionStorage.setItem("current_level", String(assessmentLevel));
-        setSaving(false);
-        router.push("/assessment");
-        return;
-      }
-      // Different level — mark old as completed, create new
-      await supabase
+      // Check for existing active assessment of the same level
+      const { data: existing, error: existingError } = await supabase
         .from("assessments")
-        .update({ status: "completed", updated_at: new Date().toISOString() })
-        .eq("id", existing[0].id);
-    }
+        .select("id, level")
+        .eq("company_id", companyId)
+        .eq("status", "in_progress")
+        .order("created_at", { ascending: false })
+        .limit(1);
 
-    const { data: assessment } = await supabase
-      .from("assessments")
-      .insert({
-        company_id: companyId,
-        level: assessmentLevel,
-        status: "in_progress",
-      })
-      .select("id")
-      .single();
+      if (existingError) throw new Error(existingError.message);
 
-    setSaving(false);
+      if (existing?.[0]) {
+        if (existing[0].level === assessmentLevel) {
+          sessionStorage.setItem("current_assessment_id", existing[0].id);
+          sessionStorage.setItem("current_level", String(assessmentLevel));
+          router.push("/assessment");
+          return;
+        }
+        // Different level — mark old as completed
+        const { error: completeError } = await supabase
+          .from("assessments")
+          .update({ status: "completed", updated_at: new Date().toISOString() })
+          .eq("id", existing[0].id);
 
-    if (assessment) {
+        if (completeError) throw new Error(completeError.message);
+      }
+
+      const { data: assessment, error: insertError } = await supabase
+        .from("assessments")
+        .insert({
+          company_id: companyId,
+          level: assessmentLevel,
+          status: "in_progress",
+        })
+        .select("id")
+        .single();
+
+      if (insertError) throw new Error(insertError.message);
+      if (!assessment) throw new Error("Failed to create assessment");
+
       sessionStorage.setItem("current_assessment_id", assessment.id);
       sessionStorage.setItem("current_level", String(assessmentLevel));
-    }
 
-    router.push("/assessment");
+      setSaving(false);
+      router.push("/assessment");
+    } catch (err: any) {
+      console.error("Assessment creation error:", err);
+      setError(err.message || "Something went wrong. Please try again.");
+      setSaving(false);
+    }
   };
 
   const handleScopeContinue = () => {
     if (scope.length === 0) {
-      alert("Please select at least one area where CUI resides.");
+      setError("Please select at least one area where CUI resides.");
       return;
     }
-    createAssessment(2, scope);
+    createAssessment(2);
   };
 
   return (
@@ -174,6 +202,7 @@ function OnboardingContent() {
               </span>
             </label>
           </div>
+          {error && <div className="alert alert-danger text-sm mt-4">{error}</div>}
           {cuiChoice && (
             <div className="mt-6">
               <p className="text-sm text-gray-600 mb-2">
@@ -211,6 +240,7 @@ function OnboardingContent() {
               </label>
             ))}
           </div>
+          {error && <div className="alert alert-danger text-sm mb-4">{error}</div>}
           <button onClick={handleScopeContinue} disabled={saving} className="btn btn-gold">
             {saving ? "Setting up..." : "Start Checklist"} <ArrowRight size={18} />
           </button>

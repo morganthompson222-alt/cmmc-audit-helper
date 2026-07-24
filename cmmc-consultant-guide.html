@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMMC Consultant Knowledge Base</title>
+<style>
+  :root {
+    --navy: #0b1a3a; --navy-light: #1a2f5a; --gold: #d4a843;
+    --red: #b22234; --green: #2d7d46; --gray: #6c757d;
+    --light-bg: #f4f6f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--light-bg); color: #1e1e2a; line-height: 1.7;
+    max-width: 900px; margin: 0 auto; padding: 40px 20px;
+  }
+  h1 { font-size: 2rem; color: var(--navy); border-bottom: 3px solid var(--gold); padding-bottom: 8px; margin-bottom: 12px; }
+  h2 { font-size: 1.4rem; color: var(--navy); margin: 36px 0 10px; border-left: 4px solid var(--gold); padding-left: 12px; }
+  h3 { font-size: 1.1rem; color: var(--navy); margin: 20px 0 6px; }
+  p { margin-bottom: 10px; font-size: 0.95rem; }
+  ul, ol { margin: 0 0 12px 20px; }
+  li { margin-bottom: 4px; font-size: 0.95rem; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 0.9rem; }
+  th, td { border: 1px solid #d0d4e0; padding: 10px 14px; text-align: left; }
+  th { background: var(--navy); color: #fff; font-weight: 600; }
+  tr:nth-child(even) { background: #f8f9fc; }
+  .card {
+    background: #fff; border-radius: 10px; padding: 24px 28px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.06); margin-bottom: 20px;
+  }
+  .highlight {
+    background: #fff3cd; border-left: 3px solid #ffc107;
+    padding: 10px 14px; border-radius: 4px; margin: 10px 0; font-size: 0.9rem;
+  }
+  .warning {
+    background: #f8d7da; border-left: 3px solid var(--red);
+    padding: 12px 16px; border-radius: 4px; margin: 10px 0; font-size: 0.9rem;
+  }
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .tag-l1 { background: #e6edf8; color: var(--navy); }
+  .tag-l2 { background: #d4edda; color: var(--green); }
+  .tag-critical { background: #f8d7da; color: var(--red); }
+  .pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; margin-right: 4px; }
+  .pill-1 { background: #d4edda; color: #155724; }
+  .pill-3 { background: #fff3cd; color: #856404; }
+  .pill-5 { background: #f8d7da; color: #721c24; }
+  .script {
+    background: #1a2f5a; color: #f0d68a; padding: 16px 20px; border-radius: 8px;
+    font-size: 0.9rem; margin: 10px 0; line-height: 1.8;
+  }
+  .script strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<h1>CMMC Consultant Knowledge Base</h1>
+<p style="color:var(--gray); font-size:0.9rem;">Everything you need to know to sell, explain, and deliver CMMC self-assessment prep. Last updated: 23 July 2026.</p>
+
+<!-- SECTION 1 -->
+<h2>1. Current State of Play (July 2026)</h2>
+<div class="card">
+  <p><strong>July 13, 2026:</strong> DoD suspended CMMC Phase II — the C3PAO certification requirement that was due November 10, 2026. Secretary Hegseth ordered a 60-day comprehensive review. A CMMC Reform Task Force is delivering recommendations.</p>
+
+  <div class="highlight">
+    <strong>Phase I self-assessment requirements are STILL IN FORCE.</strong> Contractors must continue complying with NIST SP 800-171 Rev 2 and DFARS 252.204-7012. They still need to self-assess and upload scores to SPRS.
+  </div>
+
+  <p><strong>What this means for you:</strong> Every small contractor is confused. They don't know if they still need to do anything. Your sales pitch is simple: <em>"Yes, you still need to self-assess. I help you do it right."</em></p>
+</div>
+
+<!-- SECTION 2 -->
+<h2>2. The Two Levels</h2>
+<table>
+  <tr><th></th><th><span class="tag tag-l1">Level 1</span></th><th><span class="tag tag-l2">Level 2</span></th></tr>
+  <tr><td><strong>Protects</strong></td><td>FCI (Federal Contract Information)</td><td>CUI (Controlled Unclassified Information)</td></tr>
+  <tr><td><strong>Controls</strong></td><td>15 (FAR 52.204-21)</td><td>110 (NIST SP 800-171 Rev 2)</td></tr>
+  <tr><td><strong>Assessment</strong></td><td>Annual self-assessment only</td><td>Self-assessment (C3PAO suspended)</td></tr>
+  <tr><td><strong>SPRS Score</strong></td><td>Just complete and submit</td><td>Score out of 110; no minimum set</td></tr>
+  <tr><td><strong>Typical contractor</strong></td><td>Janitors, caterers, basic suppliers</td><td>Engineering firms, IT vendors, manufacturers</td></tr>
+</table>
+
+<h3>FCI vs CUI — Know the Difference</h3>
+<div class="card">
+  <p><strong>FCI:</strong> Information provided by the government under a contract. Invoices, payment data, contract terms. Not sensitive. Not marked.</p>
+  <p><strong>CUI:</strong> Information the government creates or possesses that requires safeguarding. Technical drawings, engineering specs, source code. Often marked "CUI" or "Controlled".</p>
+  <p><strong>Quick test for a contractor:</strong> <em>"Does your contract mention DFARS 252.204-7012?"</em> If yes → Level 2.</p>
+</div>
+
+<!-- SECTION 3 -->
+<h2>3. SPRS Score — The Real Formula</h2>
+<div class="card">
+  <p>The score is <strong>not</strong> a simple percentage. The DoD methodology:</p>
+  <ul>
+    <li><strong>Start at 110</strong> (all requirements met)</li>
+    <li><strong>Subtract deductions</strong> for each unmet NIST 800-171 requirement</li>
+    <li>Each control has a <strong>weight of 1, 3, or 5 points</strong></li>
+    <li>Submission goes into <strong>SPRS</strong> (Supplier Performance Risk System)</li>
+  </ul>
+</div>
+
+<h3>Control Weight Categories (NIST 800-171)</h3>
+<table>
+  <tr><th>Weight</th><th>Meaning</th><th>Example controls</th></tr>
+  <tr><td><span class="pill pill-1">1 point</span></td><td>Basic safeguarding</td><td>Training records, policies documented</td></tr>
+  <tr><td><span class="pill pill-3">3 points</span></td><td>Technical controls</td><td>Session lock, audit logging, access reviews</td></tr>
+  <tr><td><span class="pill pill-5">5 points</span></td><td>Critical security</td><td>MFA, encryption at rest/transit, incident response plan tested</td></tr>
+</table>
+
+<!-- SECTION 4 -->
+<h2>4. DFARS Clauses You Must Know</h2>
+<table>
+  <tr><th>Clause</th><th>What it requires</th></tr>
+  <tr><td><strong>252.204-7012</strong></td><td>Safeguard CUI using NIST 800-171. Report cyber incidents to DoD within <strong>72 hours</strong>. Flow down to subcontractors.</td></tr>
+  <tr><td><strong>252.204-7019</strong></td><td>Must have a <strong>current NIST 800-171 self-assessment score</strong> in SPRS. Must renew at least every 3 years (every year for basic assessments).</td></tr>
+  <tr><td><strong>252.204-7020</strong></td><td>DoD can <strong>request to see</strong> your assessment and supporting evidence. You must provide it within 14 days.</td></tr>
+  <tr><td><strong>252.204-7021</strong></td><td>CMMC certification requirement. This clause drives the C3PAO requirement — currently suspended under Phase II suspension.</td></tr>
+</table>
+
+<!-- SECTION 5 -->
+<h2>5. Evidence — What They Actually Need</h2>
+<div class="card">
+  <p>For every control, auditors look for <strong>three layers of evidence:</strong></p>
+
+  <h3>Layer 1 &mdash; Policy</h3>
+  <p><em>"We have a rule that says we do this."</em></p>
+  <ul>
+    <li>Written policy document, signed by leadership, dated within last year</li>
+    <li>Example: "Access Control Policy v2.1, signed by CEO, 3/2026"</li>
+  </ul>
+
+  <h3>Layer 2 &mdash; Implementation</h3>
+  <p><em>"Here's proof the rule is actually configured."</em></p>
+  <ul>
+    <li>Screenshots of settings, GPOs, firewall rules, MFA configuration screens</li>
+    <li>Example: Screenshot of Windows password policy GPO showing 14-char minimum</li>
+  </ul>
+
+  <h3>Layer 3 &mdash; Operation</h3>
+  <p><em>"We actively maintain this."</em></p>
+  <ul>
+    <li>Logs, review records, audit trails, training completion certificates</li>
+    <li>Example: Quarterly access review spreadsheet with sign-offs, dated last 12 months</li>
+  </ul>
+
+  <div class="highlight">
+    <strong>Most common failure:</strong> Policy documents exist but zero implementation or operational evidence. "We have a policy" = not enough.
+  </div>
+</div>
+
+<!-- SECTION 6 -->
+<h2>6. The 14 NIST 800-171 Control Families</h2>
+<div class="card">
+  <ol>
+    <li><strong>Access Control (AC)</strong> — Who can access what, least privilege, session locks, remote access</li>
+    <li><strong>Awareness &amp; Training (AT)</strong> — Security awareness training for all users, role-based training</li>
+    <li><strong>Audit &amp; Accountability (AU)</strong> — Logging, log review, log protection, alerting</li>
+    <li><strong>Configuration Management (CM)</strong> — Baselines, change control, patching, least functionality</li>
+    <li><strong>Identification &amp; Authentication (IA)</strong> — Unique IDs, MFA, password policies, account lockout</li>
+    <li><strong>Incident Response (IR)</strong> — IR plan, testing, reporting, post-incident review</li>
+    <li><strong>Maintenance (MA)</strong> — Scheduled maintenance, vendor access control, maintenance records</li>
+    <li><strong>Media Protection (MP)</strong> — Media sanitization, labeling CUI, encryption on removable media</li>
+    <li><strong>Personnel Security (PS)</strong> — Background checks, termination procedures, access reviews</li>
+    <li><strong>Physical Protection (PE)</strong> — Physical access controls, visitor logs, environmental controls</li>
+    <li><strong>Risk Assessment (RA)</strong> — Risk assessments, risk register, periodic updates</li>
+    <li><strong>Security Assessment (CA)</strong> — Control testing, vulnerability scanning, POA&amp;M tracking</li>
+    <li><strong>System &amp; Communications Protection (SC)</strong> — Encryption, network segmentation, firewalls, boundary defense</li>
+    <li><strong>System &amp; Information Integrity (SI)</strong> — Antivirus, malware protection, integrity monitoring, flaw remediation</li>
+  </ol>
+</div>
+
+<!-- SECTION 7 -->
+<h2>7. The Three Statuses That Matter</h2>
+<table>
+  <tr><th>Status</th><th>What it means</th><th>SPRS Impact</th></tr>
+  <tr>
+    <td><strong>Implemented</strong></td>
+    <td>Control is fully in place with policy + implementation + operational evidence</td>
+    <td>No deduction</td>
+  </tr>
+  <tr>
+    <td><strong>Not Implemented</strong></td>
+    <td>Control is absent or only partially done</td>
+    <td>Deduction applies</td>
+  </tr>
+  <tr>
+    <td><strong>Not Applicable</strong></td>
+    <td>Control doesn't apply to the contractor's environment (must justify)</td>
+    <td>No deduction (but must document why)</td>
+  </tr>
+</table>
+
+<div class="warning">
+  <strong>N/A is not a free pass.</strong> You can't just mark controls N/A without justification. A government assessor will challenge N/A claims. Document specific reasons.
+</div>
+
+<!-- SECTION 8 -->
+<h2>8. The Legal Risk – False Claims Act</h2>
+<div class="card">
+  <p>The <strong>False Claims Act (31 U.S.C. §§ 3729-3733)</strong> makes it illegal to knowingly submit false claims to the government. This includes:</p>
+  <ul>
+    <li>Submitting a SPRS score that doesn't reflect actual implementation</li>
+    <li>Claiming controls are "implemented" when they only exist on paper</li>
+    <li>Falsely marking controls as N/A to boost a score</li>
+  </ul>
+  <p><strong>Penalties:</strong> 3x the government's damages + $13,946–$27,894 per false claim (2026 adjusted). Plus debarment from federal contracting.</p>
+  <p><strong>Recent context:</strong> DOJ has been increasingly active on cybersecurity False Claims Act cases since 2021. The Civil Cyber-Fraud Initiative specifically targets contractors who misrepresent cybersecurity compliance.</p>
+</div>
+
+<!-- SECTION 9 -->
+<h2>9. Sales Script — The Conversation Flow</h2>
+<div class="script">
+  <strong>You:</strong> "Do you have DFARS 252.204-7012 in your contract?"<br><br>
+  <strong>They:</strong> [Yes → Level 2] [No/I don't know → Check their contract, they probably do]<br><br>
+  <strong>You:</strong> "When was the last time you submitted a self-assessment score to SPRS?"<br>
+  [90% will say never or they did it years ago]<br><br>
+  <strong>You:</strong> "When was the last time you reviewed your user access list? Your patching logs? Your employee training records?"<br>
+  [This is where they freeze. That's your opening.]<br><br>
+  <strong>You:</strong> "Do you know where your CUI actually lives? Servers? Email? SharePoint? USB drives in people's bags?"<br>
+  [Most can't answer this. That's what the scope builder in the tool solves.]<br><br>
+  <strong>You:</strong> "The Phase II C3PAO certification has been suspended, but self-assessment requirements haven't gone anywhere. I have a tool that walks you through all 110 controls step by step, organizes your evidence, and generates your documentation. You do the work, I help you organize it. £1,000 one-time."
+</div>
+
+<h3>Objection Handling</h3>
+<div class="card">
+  <p><strong>"CMMC got cancelled, right?"</strong><br>
+  &rarr; "The C3PAO certification requirement was suspended. Self-assessment is still required. You can't skip it. Your contract still has DFARS 7012 and 7019."</p>
+  <p><strong>"My IT guy handles this."</strong><br>
+  &rarr; "IT handles the technical controls. This tool handles the paperwork, evidence organization, and SPRS submission prep. Those are different things."</p>
+  <p><strong>"We're too small for this."</strong><br>
+  &rarr; "If you have a DoD contract, you're not too small. The DoD is specifically trying to keep small businesses in the supply chain. The self-assessment is the minimum bar."</p>
+  <p><strong>"£1,000 is a lot."</strong><br>
+  &rarr; "A single False Claims Act penalty starts at £11,000. Lost contracts from non-compliance cost far more. This is insurance for your DoD revenue."</p>
+</div>
+
+<!-- SECTION 10 -->
+<h2>10. Your Service Boundaries</h2>
+<div class="card">
+  <p><strong>What you DO:</strong></p>
+  <ul>
+    <li>Walk contractors through the 110 control checklist</li>
+    <li>Help them understand what each control means in plain English</li>
+    <li>Provide a place to upload and organize evidence per control</li>
+    <li>Track POA&amp;M items for controls that aren't done yet</li>
+    <li>Generate SSP summary and POA&amp;M documentation</li>
+    <li>Package everything as a downloadable zip for SPRS preparation</li>
+  </ul>
+
+  <p><strong>What you DO NOT do:</strong></p>
+  <ul>
+    <li>Certify compliance (only a C3PAO can do that)</li>
+    <li>Implement technical controls (that's their IT team's job)</li>
+    <li>Guarantee any SPRS score or audit outcome</li>
+    <li>Provide legal advice about contract obligations</li>
+    <li>Submit anything to the government on their behalf</li>
+  </ul>
+
+  <div class="warning">
+    <strong>Always say:</strong> "This tool is a self-assessment preparation aid. It is not a certification and does not replace a C3PAO assessment. You are responsible for the accuracy of anything you submit to SPRS."
+  </div>
+</div>
+
+<!-- SECTION 11 -->
+<h2>11. Key Acronyms Cheat Sheet</h2>
+<table>
+  <tr><th>Acronym</th><th>Full Name</th><th>Memory hook</th></tr>
+  <tr><td>CMMC</td><td>Cybersecurity Maturity Model Certification</td><td>"See-mick"</td></tr>
+  <tr><td>C3PAO</td><td>CMMC Third Party Assessment Organization</td><td>Certified assessor (suspended)</td></tr>
+  <tr><td>CUI</td><td>Controlled Unclassified Information</td><td>Sensitive but not classified</td></tr>
+  <tr><td>FCI</td><td>Federal Contract Information</td><td>Basic contract data</td></tr>
+  <tr><td>SPRS</td><td>Supplier Performance Risk System</td><td>Where scores go</td></tr>
+  <tr><td>NIST</td><td>National Institute of Standards and Technology</td><td>They publish the 800-171 standard</td></tr>
+  <tr><td>DFARS</td><td>Defense Federal Acquisition Regulation Supplement</td><td>Contract rules</td></tr>
+  <tr><td>SSP</td><td>System Security Plan</td><td>Your control documentation</td></tr>
+  <tr><td>POA&amp;M</td><td>Plan of Action &amp; Milestones</td><td>Remediation plan for gaps</td></tr>
+  <tr><td>MFA</td><td>Multi-Factor Authentication</td><td>2-step login</td></tr>
+  <tr><td>DIB</td><td>Defense Industrial Base</td><td>The supply chain you sell to</td></tr>
+  <tr><td>ATS</td><td>Acquisition Transformation System</td><td>Hegseth's reform initiative</td></tr>
+</table>
+
+<!-- SECTION 12 -->
+<h2>12. Timeline &amp; What's Coming</h2>
+<div class="card">
+  <p><strong>Now (July 2026):</strong> Phase II suspended. Self-assessments required. 60-day CMMC Reform Task Force review underway.</p>
+  <p><strong>~September 2026:</strong> Task force recommendations due. Possible announcement of revised CMMC framework.</p>
+  <p><strong>Original deadline was November 10, 2026:</strong> This was for Phase II implementation. Don't cite this as a deadline — it's moot now. But contractors who were rushing toward it are still nervous.</p>
+  <p><strong>Bottom line:</strong> Compliance obligations haven't disappeared. The urgency has shifted from "get certified" to "stay compliant while we wait." Position your tool as the bridge between confusion and clarity.</p>
+</div>
+
+<p style="text-align:center; color:var(--gray); margin-top:40px; font-size:0.85rem;">
+  CMMC Audit Helper &bull; Self-assessment preparation tool &bull; Not a C3PAO certification
+</p>
+
+</body>
+</html>
