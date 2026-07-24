@@ -54,7 +54,7 @@ function ExportContent() {
     }
 
     const { data: companies } = await supabase
-      .from("companies")
+      .from("cmmc_companies")
       .select("id, name, cmmc_level, subscription_status")
       .eq("owner_user_id", user.id)
       .limit(1);
@@ -71,7 +71,7 @@ function ExportContent() {
     setHasPaid(company.subscription_status === "paid");
 
     const { data: assessment } = await supabase
-      .from("assessments")
+      .from("cmmc_assessments")
       .select("id")
       .eq("company_id", company.id)
       .order("created_at", { ascending: false })
@@ -86,7 +86,7 @@ function ExportContent() {
     setAssessmentId(a.id);
 
     const { data: resps } = await supabase
-      .from("control_responses")
+      .from("cmmc_control_responses")
       .select("*")
       .eq("assessment_id", a.id);
 
@@ -95,7 +95,7 @@ function ExportContent() {
     if (resps?.length) {
       const responseIds = resps.map((r: ControlResponse) => r.id);
       const { data: poams } = await supabase
-        .from("poam_items")
+        .from("cmmc_poam_items")
         .select("*")
         .in("control_response_id", responseIds);
 
@@ -226,15 +226,15 @@ function ExportContent() {
       // Fetch evidence files from Supabase Storage
       if (assessmentId && companyId) {
         const { data: allResponses } = await supabase
-          .from("control_responses")
+          .from("cmmc_control_responses")
           .select("id, control_id")
           .eq("assessment_id", assessmentId);
 
         if (allResponses?.length) {
-          const responseIds = allResponses.map((r: ControlResponse) => r.id);
+          const responseIds = allResponses.map((r: { id: string }) => r.id);
 
           const { data: evidence } = await supabase
-            .from("evidence_files")
+            .from("cmmc_evidence_files")
             .select("*")
             .in("control_response_id", responseIds);
 
@@ -249,7 +249,7 @@ function ExportContent() {
 
                 if (blob && evidenceFolder) {
                   const ctrlResp = allResponses.find(
-                    (r: ControlResponse) => r.id === ev.control_response_id
+                    (r) => r.id === ev.control_response_id
                   );
                   const ctrlId = ctrlResp?.control_id || "unknown";
                   evidenceFolder.file(`${ctrlId}/${ev.filename}`, blob);

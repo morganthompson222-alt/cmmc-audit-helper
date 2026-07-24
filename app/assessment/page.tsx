@@ -45,7 +45,7 @@ function AssessmentContent() {
     }
 
     const { data: companies } = await supabase
-      .from("companies")
+      .from("cmmc_companies")
       .select("id, cmmc_level")
       .eq("owner_user_id", user.id)
       .limit(1);
@@ -61,7 +61,7 @@ function AssessmentContent() {
 
     // Find or create assessment
     let { data: assessment } = await supabase
-      .from("assessments")
+      .from("cmmc_assessments")
       .select("id, level")
       .eq("company_id", company.id)
       .order("created_at", { ascending: false })
@@ -69,7 +69,7 @@ function AssessmentContent() {
 
     if (!assessment?.[0]) {
       const { data: newAssessment } = await supabase
-        .from("assessments")
+        .from("cmmc_assessments")
         .insert({
           company_id: company.id,
           level: company.cmmc_level || 1,
@@ -88,7 +88,7 @@ function AssessmentContent() {
 
       // Load responses
       const { data: resps } = await supabase
-        .from("control_responses")
+        .from("cmmc_control_responses")
         .select("*")
         .eq("assessment_id", a.id);
 
@@ -102,7 +102,7 @@ function AssessmentContent() {
       const responseIds = resps?.map((r: ControlResponse) => r.id) || [];
       if (responseIds.length > 0) {
         const { data: evidence } = await supabase
-          .from("evidence_files")
+          .from("cmmc_evidence_files")
           .select("*")
           .in("control_response_id", responseIds);
 
@@ -121,7 +121,7 @@ function AssessmentContent() {
       // Load POA&M
       if (responseIds.length > 0) {
         const { data: poams } = await supabase
-          .from("poam_items")
+          .from("cmmc_poam_items")
           .select("*")
           .in("control_response_id", responseIds);
 
@@ -148,7 +148,7 @@ function AssessmentContent() {
       if (existing) return existing;
 
       const { data: newResp } = await supabase
-        .from("control_responses")
+        .from("cmmc_control_responses")
         .insert({
           assessment_id: assessmentId,
           control_id: controlId,
@@ -181,7 +181,7 @@ function AssessmentContent() {
 
       debouncedSave(controlId, async () => {
         const { error } = await supabase
-          .from("control_responses")
+          .from("cmmc_control_responses")
           .update({ status, updated_at: new Date().toISOString() })
           .eq("id", resp.id);
 
@@ -196,7 +196,7 @@ function AssessmentContent() {
 
         // Handle POA&M
         if (status === "in_progress") {
-          await supabase.from("poam_items").upsert(
+          await supabase.from("cmmc_poam_items").upsert(
             {
               control_response_id: resp.id,
               description: "",
@@ -205,7 +205,7 @@ function AssessmentContent() {
             { onConflict: "control_response_id" }
           );
         } else {
-          await supabase.from("poam_items").delete().eq("control_response_id", resp.id);
+          await supabase.from("cmmc_poam_items").delete().eq("control_response_id", resp.id);
           setPoamItems((prev) => {
             const next = new Map(prev);
             next.delete(controlId);
@@ -226,7 +226,7 @@ function AssessmentContent() {
 
       debouncedSave(controlId, async () => {
         const { error } = await supabase
-          .from("control_responses")
+          .from("cmmc_control_responses")
           .update({ notes, updated_at: new Date().toISOString() })
           .eq("id", resp.id);
 
@@ -270,7 +270,7 @@ function AssessmentContent() {
           if (uploadError) throw uploadError;
 
           const { data: evRecord, error: insertError } = await supabase
-            .from("evidence_files")
+            .from("cmmc_evidence_files")
             .insert({
               control_response_id: resp.id,
               storage_path: storagePath,
@@ -312,7 +312,7 @@ function AssessmentContent() {
 
       await save(controlId, async () => {
         const { data: fileRecord } = await supabase
-          .from("evidence_files")
+          .from("cmmc_evidence_files")
           .select("storage_path, id")
           .eq("id", fileId)
           .single();
@@ -320,7 +320,7 @@ function AssessmentContent() {
         if (!fileRecord) throw new Error("Evidence record not found");
 
         const { error: deleteError } = await supabase
-          .from("evidence_files")
+          .from("cmmc_evidence_files")
           .delete()
           .eq("id", fileId);
 
@@ -354,7 +354,7 @@ function AssessmentContent() {
       if (!resp) return;
 
       debouncedSave(controlId, async () => {
-        const { error } = await supabase.from("poam_items").upsert(
+        const { error } = await supabase.from("cmmc_poam_items").upsert(
           {
             control_response_id: resp.id,
             description,

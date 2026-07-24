@@ -19,7 +19,7 @@ export function createClient() {
         },
       },
     }
-  ).schema("cmmc");
+  );
 }
 
 export function createServiceClient() {
@@ -40,5 +40,5 @@ export function createServiceClient() {
         },
       },
     }
-  ).schema("cmmc");
+  );
 }

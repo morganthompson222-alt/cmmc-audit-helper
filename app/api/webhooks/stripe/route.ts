@@ -27,13 +27,13 @@ export async function POST(request: Request) {
 
       // Update payment status
       await supabase
-        .from("payments")
+        .from("cmmc_payments")
         .update({ status: "paid" })
         .eq("stripe_session_id", session.id);
 
       // Update company subscription status
       await supabase
-        .from("companies")
+        .from("cmmc_companies")
         .update({ subscription_status: "paid" })
         .eq("id", companyId);
     }

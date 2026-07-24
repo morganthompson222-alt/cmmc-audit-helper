@@ -54,7 +54,7 @@ function OnboardingContent() {
 
       // Find company
       const { data: companies, error: companiesError } = await supabase
-        .from("companies")
+        .from("cmmc_companies")
         .select("id")
         .eq("owner_user_id", user.id)
         .limit(1);
@@ -66,7 +66,7 @@ function OnboardingContent() {
       if (!companyId) {
         // Create company if not exists
         const { data: newCompany, error: createError } = await supabase
-          .from("companies")
+          .from("cmmc_companies")
           .insert({
             name: "My Company",
             owner_user_id: user.id,
@@ -81,7 +81,7 @@ function OnboardingContent() {
         companyId = newCompany.id;
       } else {
         const { error: updateError } = await supabase
-          .from("companies")
+          .from("cmmc_companies")
           .update({ cmmc_level: assessmentLevel })
           .eq("id", companyId);
 
@@ -103,7 +103,7 @@ function OnboardingContent() {
 
       // Check for existing active assessment of the same level
       const { data: existing, error: existingError } = await supabase
-        .from("assessments")
+        .from("cmmc_assessments")
         .select("id, level")
         .eq("company_id", companyId)
         .eq("status", "in_progress")
@@ -121,7 +121,7 @@ function OnboardingContent() {
         }
         // Different level — mark old as completed
         const { error: completeError } = await supabase
-          .from("assessments")
+          .from("cmmc_assessments")
           .update({ status: "completed", updated_at: new Date().toISOString() })
           .eq("id", existing[0].id);
 
@@ -129,7 +129,7 @@ function OnboardingContent() {
       }
 
       const { data: assessment, error: insertError } = await supabase
-        .from("assessments")
+        .from("cmmc_assessments")
         .insert({
           company_id: companyId,
           level: assessmentLevel,

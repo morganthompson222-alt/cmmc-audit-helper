@@ -6,6 +6,5 @@ export function createClient() {
 
   if (!url || !key) return null;
 
-  const supabase = createBrowserClient(url, key);
-  return supabase.schema("cmmc");
+  return createBrowserClient(url, key);
 }

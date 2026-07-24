@@ -40,7 +40,7 @@ export default function SignupPage() {
     if (data.user) {
       // Create company record
       const { error: companyError } = await supabase
-        .from("companies")
+        .from("cmmc_companies")
         .insert({
           name: companyName,
           owner_user_id: data.user.id,

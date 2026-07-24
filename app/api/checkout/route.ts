@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
     // Find the user's company
     const { data: companies } = await supabase
-      .from("companies")
+      .from("cmmc_companies")
       .select("id, name, subscription_status")
       .eq("owner_user_id", user.id)
       .limit(1);
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     });
 
     // Record pending payment
-    await supabase.from("payments").insert({
+    await supabase.from("cmmc_payments").insert({
       company_id: company.id,
       stripe_session_id: session.id,
       amount: STRIPE_AMOUNT,

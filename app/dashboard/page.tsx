@@ -36,7 +36,7 @@ function DashboardContent() {
     }
 
     const { data: companies } = await supabase
-      .from("companies")
+      .from("cmmc_companies")
       .select("id, name, cmmc_level, subscription_status")
       .eq("owner_user_id", user.id)
       .limit(1);
@@ -47,7 +47,7 @@ function DashboardContent() {
       setHasPaid(companies[0].subscription_status === "paid");
 
       const { data: assessment } = await supabase
-        .from("assessments")
+        .from("cmmc_assessments")
         .select("id, level")
         .eq("company_id", companies[0].id)
         .order("created_at", { ascending: false })
@@ -58,7 +58,7 @@ function DashboardContent() {
         setLevel(assessment[0].level as CMMCLevel);
 
         const { data: resps } = await supabase
-          .from("control_responses")
+          .from("cmmc_control_responses")
           .select("*")
           .eq("assessment_id", assessment[0].id);
 
